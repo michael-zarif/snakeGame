@@ -9,7 +9,7 @@ else:
     print("pygame successfully initialized")
 
 # Play surface
-playSurface = pygame.display.set_mode((720, 460))
+play_surface = pygame.display.set_mode((720, 460))
 pygame.display.set_caption("Snake Game!")
 
 # Colors
@@ -23,69 +23,69 @@ brown = pygame.Color(165, 42, 42)  # food
 fpsController = pygame.time.Clock()
 
 # Important variables
-snakePos = [100, 50]  # [0,0] is in the top left corner
-snakeBody = [snakePos, [snakePos[0] - 10, snakePos[1]], [snakePos[0] - 20, snakePos[1]]]
-foodPos = [random.randrange(1, 72) * 10, random.randrange(1, 46) * 10]
-direction = 'RIGHT'  # current moving direction
+snake_pos = [100, 50]  # [0,0] is in the top left corner
+snake_body = [snake_pos, [snake_pos[0] - 10, snake_pos[1]], [snake_pos[0] - 20, snake_pos[1]]]  # values will be updated
+food_pos = [random.randrange(1, 72) * 10, random.randrange(1, 46) * 10]
+direction = 'RIGHT'  # default moving direction
 score = 0
 
 
 # Game Over function
-def gameOver():
-    GOFont = pygame.font.SysFont('monaco', 72)
-    GOSurface = GOFont.render('Game Over!', True, red)
-    GORectangle = GOSurface.get_rect()
-    GORectangle.midtop = (360, 20)
-    playSurface.blit(GOSurface, GORectangle)
-    pygame.draw.rect(playSurface, red, pygame.Rect(snakeBody[0][0], snakeBody[0][1], 10, 10))
-    showScore(False)
-    pygame.display.flip()  # update playSurface, can use .update() as well
+def game_over():
+    game_over_font = pygame.font.SysFont('monaco', 72)
+    game_over_surface = game_over_font.render('Game Over!', True, red)
+    game_over_rectangle = game_over_surface.get_rect()
+    game_over_rectangle.midtop = (360, 20)
+    play_surface.blit(game_over_surface, game_over_rectangle)
+    pygame.draw.rect(play_surface, red, pygame.Rect(snake_body[0][0], snake_body[0][1], 10, 10))
+    show_score(False)
+    pygame.display.flip()  # update play_surface, can use .update() as well
     time.sleep(3)
     pygame.quit()  # pygame exit
     sys.exit()  # console exit
 
 
 # Show Score function
-def showScore(live=True):
+def show_score(live=True):
     if live:
         score_font = pygame.font.SysFont('monaco', 26)
         score_surface = score_font.render(f"Score: {score}", True, black)
         score_rectangle = score_surface.get_rect()
         score_rectangle.midtop = (80, 10)
-    else:  # showScore() should be called after gameOver()
+    else:  # show_score() should be called after game_over()
         score_font = pygame.font.SysFont('monaco', 34)
         score_surface = score_font.render(f"Score: {score}", True, black)
         score_rectangle = score_surface.get_rect()
         score_rectangle.midtop = (360, 120)
-    playSurface.blit(score_surface, score_rectangle)  # pygame.display.flip() is not needed, as it's in the main code
+    play_surface.blit(score_surface, score_rectangle)  # pygame.display.flip() is not needed, as it's in the main code
 
 
 # Game Main Logic
 while True:
     # Snake Body Mechanism
-    snakeBody.insert(0, list(snakePos))
-    if snakePos == foodPos:
+    snake_body.insert(0, list(snake_pos))
+    if snake_pos == food_pos:
         score += 10
-        while foodPos in snakeBody:
-            foodPos = [random.randrange(1, 72) * 10, random.randrange(1, 46) * 10]
+        while food_pos in snake_body:
+            food_pos = [random.randrange(1, 72) * 10, random.randrange(1, 46) * 10]
     else:
-        snakeBody.pop()
+        snake_body.pop()
 
     # Drawing
-    playSurface.fill(white)
-    for pos in snakeBody:
-        pygame.draw.rect(playSurface, black, pygame.Rect(pos[0], pos[1], 10, 10))
-    pygame.draw.rect(playSurface, green, pygame.Rect(foodPos[0], foodPos[1], 10, 10))
+    play_surface.fill(white)
+    for pos in snake_body:
+        pygame.draw.rect(play_surface, black, pygame.Rect(pos[0], pos[1], 10, 10))
+    pygame.draw.rect(play_surface, green, pygame.Rect(food_pos[0], food_pos[1], 10, 10))
 
     # Update Snake Position [x,y]
     if direction == 'RIGHT':
-        snakePos[0] += 10
+        snake_pos[0] += 10
     elif direction == 'LEFT':
-        snakePos[0] -= 10
+        snake_pos[0] -= 10
     elif direction == 'UP':
-        snakePos[1] -= 10
+        snake_pos[1] -= 10
     elif direction == 'DOWN':
-        snakePos[1] += 10
+        snake_pos[1] += 10
 
     # Events
     for event in pygame.event.get():
@@ -105,15 +105,15 @@ while True:
                 pygame.event.post(pygame.event.Event(pygame.QUIT))  # create QUIT event
 
     # Game Over Conditions
-    if snakePos[0] < 0 or snakePos[0] >= 720 or snakePos[1] < 0 or snakePos[1] >= 460:
-        gameOver()
+    if snake_pos[0] < 0 or snake_pos[0] >= 720 or snake_pos[1] < 0 or snake_pos[1] >= 460:
+        game_over()
 
-    for block in snakeBody:
-        if snakeBody.count(block) > 1:
-            gameOver()
+    for block in snake_body:
+        if snake_body.count(block) > 1:
+            game_over()
 
     # Common Stuff
-    showScore()
+    show_score()
     fpsController.tick(22)
     pygame.display.flip()
 
