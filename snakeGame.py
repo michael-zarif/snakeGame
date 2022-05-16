@@ -38,8 +38,8 @@ def gameOver():
     GORectangle.midtop = (360, 20)
     playSurface.blit(GOSurface, GORectangle)
     pygame.draw.rect(playSurface, red, pygame.Rect(snakeBody[0][0], snakeBody[0][1], 10, 10))
-    pygame.display.flip()  # update playSurface, can use .update() as well
     showScore(False)
+    pygame.display.flip()  # update playSurface, can use .update() as well
     time.sleep(3)
     pygame.quit()  # pygame exit
     sys.exit()  # console exit
@@ -52,16 +52,15 @@ def showScore(live=True):
         score_surface = score_font.render(f"Score: {score}", True, black)
         score_rectangle = score_surface.get_rect()
         score_rectangle.midtop = (80, 10)
-    else:
+    else:  # showScore() should be called after gameOver()
         score_font = pygame.font.SysFont('monaco', 34)
         score_surface = score_font.render(f"Score: {score}", True, black)
         score_rectangle = score_surface.get_rect()
         score_rectangle.midtop = (360, 120)
-    playSurface.blit(score_surface, score_rectangle)
-    pygame.display.flip()
+    playSurface.blit(score_surface, score_rectangle)  # pygame.display.flip() is not needed, as it's in the main code
 
 
-# Main Game Logic
+# Game Main Logic
 while True:
     # Snake Body Mechanism
     snakeBody.insert(0, list(snakePos))
@@ -77,9 +76,6 @@ while True:
     for pos in snakeBody:
         pygame.draw.rect(playSurface, black, pygame.Rect(pos[0], pos[1], 10, 10))
     pygame.draw.rect(playSurface, green, pygame.Rect(foodPos[0], foodPos[1], 10, 10))
-    fpsController.tick(22)
-    pygame.display.flip()
-    showScore()
 
     # Update Snake Position [x,y]
     if direction == 'RIGHT':
@@ -115,3 +111,15 @@ while True:
     for block in snakeBody:
         if snakeBody.count(block) > 1:
             gameOver()
+
+    # Common Stuff
+    showScore()
+    fpsController.tick(22)
+    pygame.display.flip()
+
+    # Further Updates
+    # Add Sound to Game Over
+    # Update Game icon
+    # Add Menu for restart and other options
+    # Add Game Level by configuring fpsController
+    # Create executable file using cmd -> pyinstaller --onefile <file_name>.py
